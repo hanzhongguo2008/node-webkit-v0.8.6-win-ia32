@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>测试页面</title>
+  </head>
+  <body>
+    <h1>Hello World!</h1>
+	<script>
+		var exec = require('child_process').exec;
+		//var excel = require('./index');
+
+		function GetChinesePath(){
+		
+		    var child = exec('REG QUERY HKEY_LOCAL_MACHINE\\SOFTWARE\\GrandSoft\\GCS\\3.0 /reg:32 /v Path',
+				function (error, stdout, stderr) {
+					console.log('getPath stdout: ' + stdout);
+					console.log('getPath stderr: ' + stderr);
+
+					if (error !== null) {
+						console.log('getPath exec error: ' + error);
+						callback();
+						return;
+					}
+					var strPath = stdout.replace(/[\r\n]/g, '');
+					var arrPath = strPath.split("    ");
+					alert(arrPath[2]);
+			});
+		}
+		
+	    function SetExamTime(){
+		
+		    var cp = exec('REG ADD HKEY_CURRENT_USER\\Software\\Grandsoft\\GCS\\AppInfo /f',
+				{
+					encoding:'utf8',
+					timeout:0,
+					maxBuffer:2*1024*1024,
+					killSignal:'SIGTERM',
+					cwd:null,
+					env:null
+				});
+			cp.stdout.on('data',function(){		
+				try
+				{
+					var	StartTime = document.getElementById("StartTime").value
+					var EndTime = document.getElementById("EndTime").value
+					
+					var num = addons.SetExamTime('Begin','End',StartTime,EndTime);
+					if(num == 0){
+					     
+						alert('设置成功!');
+					}
+					else{
+						alert(num1+num2 + '启动失败!');
+					}
+				}catch(e){
+				var os = require('os');
+					alert('addons测试失败!\r\n' + os.platform + "dsfdsf");
+				}
+			});
+        }
+		
+        function StartApplication() {
+            var child = exec('REG QUERY HKEY_LOCAL_MACHINE\\SOFTWARE\\GrandSoft\\GBQ_MatchTest\\4.0 /reg:32 /v App',
+				function (error, stdout, stderr) {
+					console.log('getPath stdout: ' + stdout);
+					console.log('getPath stderr: ' + stderr);
+
+					if (error !== null) {
+						console.log('getPath exec error: ' + error);
+						return;
+					}
+					var appPath = stdout.replace(/[\r\n]/g, '');
+					var arrPath = appPath.split("    ");
+
+					var os = require('os');
+					console.log('os.platform: ' + os.platform());
+					console.log('os.type: ' + os.type());
+					
+					console.log('appPath: ' + arrPath[3]);
+					
+					child = exec('start /separate "" "' + arrPath[3] + '" glodon',
+						function (error, stdout, stderr) {
+							console.log('startApp stdout: ' + stdout);
+							console.log('startApp stderr: ' + stderr);
+
+							if (error !== null) {
+								console.log('os.platform: ' + os.platform);
+								return;
+							}
+					});
+            });
+        }
+		
+		function SetStudentNumber(){
+			try
+			{
+			    var	ExaminationNumber = document.getElementById("ExaminationNumber").value
+				
+				var num1 = addons.SetApplicationInfo('ExaminationNumber',ExaminationNumber);
+				if(num1 == 0){
+					alert('设置成功!');
+				}
+				else{
+					alert(num1 + '设置失败!');
+				}
+			}catch(e){
+								var os = require('os');
+					alert('addons测试失败!\r\n' + os.platform + "dsfdsf");
+			}
+        }
+	</script>
+    <table style="width: 100%">
+		<tr>
+			<td  class="style1" style="width: 100px">开始时间:</td>
+			<td>
+			  <input type="text" id="StartTime"  style="width:250px;   background-color:lightgreen"/>
+			</td>
+			<td	class="style1" style="width:100px">结束时间:</td>
+			<td>
+			 <input type="text" id="EndTime" style="width: 250px; background-color:lightgreen"/>
+			</td>
+            <td>
+                <input type="button" value="设置时间" onclick="SetExamTime();" style="width:100px">
+            </td>
+            <td>
+                (addons设置考试开始结束时间)
+            </td>
+        </tr>
+		<tr>
+			<td  class="style1" style="width: 100px">学号:</td>
+			<td>
+			  <input type="text" id="ExaminationNumber"  style="width:250px;   background-color:lightgreen"/>
+			</td>
+            <td>
+                <input type="button" value="设置学号" onclick="SetStudentNumber();" style="width:100px">
+            </td>
+            <td>
+                (addons设置学号)
+            </td>
+        </tr>
+		<tr>
+            <td>
+                <input type="button" value="启动软件" onclick="StartApplication();" style="width:100px">
+            </td>
+            <td>
+                (nodejs启动软件)
+            </td>
+        </tr>
+		<tr>
+            <td>
+                <input type="button" value="获取路径" onclick="GetChinesePath();" style="width:100px">
+            </td>
+            <td>
+                (获取中文路径)
+            </td>
+        </tr>
+     </table>
+</body>
+</html>
