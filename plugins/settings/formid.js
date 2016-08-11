@@ -1,1 +1,0 @@
-scriptConfig.formid = true;
